@@ -1,0 +1,40 @@
+version: '3.5'
+services:
+  apache-server:
+    image: php:apache
+    container_name: apache
+    environment:
+      - 'OWNER=ADMPROXY'
+    ports:
+      - '80:80'
+      - '443:443'
+    depends_on:
+      - database
+    restart: unless-stopped
+    networks:
+      - webnet
+      - default
+
+  database:
+    image: postgres
+    container_name: database
+    restart: unless-stopped
+    environment:
+      - 'POSTGRESS_PASSWORD=admin'
+    networks:
+      - webnet
+
+  cache-server:
+    image: redis
+    container_name: redis
+    restart: unless-stopped
+    networks:
+      - webnet
+
+networks:
+  webnet:
+    name: webnet
+    driver: bridge
+  default:
+    name: localhost
+    driver: bridge
